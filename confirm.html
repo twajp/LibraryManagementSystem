@@ -1,0 +1,120 @@
+<!DOCTYPE HTML>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, height= initial-scale=1">
+    <title>確認</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+</head>
+
+<body>
+    <main class="d-flex flex-nowrap">
+        <div class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark" style="width: 280px;">
+            <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+                <svg class="bi pe-none me-2" width="40" height="32">
+                    <use xlink:href="#bootstrap"></use>
+                </svg>
+                <span class="fs-4">書籍管理システム</span>
+            </a>
+            <hr>
+            <ul class="nav nav-pills flex-column mb-auto">
+                <li class="nav-item">
+                    <a href="/" class="nav-link active">
+                        <svg class="bi pe-none me-2" width="16" height="16">
+                            <use xlink:href="#home"></use>
+                        </svg>
+                        書籍一覧
+                    </a>
+                </li>
+                <li>
+                    <a href="/entry" class="nav-link text-white" aria-current="page">
+                        <svg class="bi pe-none me-2" width="16" height="16">
+                            <use xlink:href="#speedometer2"></use>
+                        </svg>
+                        新規登録
+                    </a>
+                </li>
+            </ul>
+            <hr>
+            <div class="dropdown">
+                <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                    <img src="https://www.waseda.jp/top/assets/uploads/2020/10/waseda-UI-logo-1.jpg" alt="" width="32"
+                        height="32" class="rounded-circle me-2">
+                    <strong>{{data["username"]}}</strong>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
+                    <li><a class="dropdown-item" href="/logout">ログアウト</a></li>
+                </ul>
+            </div>
+        </div>
+
+
+        <div class="container" style="height: 100vh; overflow-y: scroll;">
+            <h2 style="text-align: center; padding: 1em;">確認</h2>
+            <p style="text-align: center;">{{data["confirm_str"]}}</p>
+            <table class="table table-striped">
+                <thead>
+                    <td>ID</td>
+                    <td>タイトル</td>
+                    <td>著者</td>
+                    <td>出版社</td>
+                    <td>購入日</td>
+                    <td>貸出状況</td>
+                </thead>
+                <tbody>
+                    %for d in data["books"]:
+                    <tr>
+                        <td>{{d["id"]}}</td>
+                        <td>{{d["title"]}}</td>
+                        <td>{{d["author"]}}</td>
+                        <td>{{d["publisher"]}}</td>
+                        <td>{{d["date_of_purchase"]}}</td>
+                        <td>{{d["due_date"]}}</td>
+                    </tr>
+                    %end
+                </tbody>
+            </table>
+            %if data["confirm_btn"] == "borrow":
+            <form method="POST" action="borrow">
+                <input type="hidden" name="username" value={{data["username"]}} />
+                %for d in data["books"]:
+                <input type="hidden" name="selected_row" value={{d["id"]}} />
+                %end
+                <div style="text-align: center; padding: 1em;">
+                    <a class="btn btn-secondary me-md-2" href="/" role="button">キャンセル</a>
+                    <button type="submit" class="btn btn-primary me-md-2">貸出</button>
+                </div>
+            </form>
+            %elif data["confirm_btn"] == "return":
+            <form method="POST" action="return">
+                %for d in data["books"]:
+                <input type="hidden" name="selected_row" value={{d["id"]}} />
+                %end
+                <div style="text-align: center; padding: 1em;">
+                    <a class="btn btn-secondary me-md-2" href="/" role="button">キャンセル</a>
+                    <button type="submit" class="btn btn-primary me-md-2">返却</button>
+                </div>
+            </form>
+            %elif data["confirm_btn"] == "delete":
+            <form method="POST" action="delete">
+                %for d in data["books"]:
+                <input type="hidden" name="selected_row" value={{d["id"]}} />
+                %end
+                <div style="text-align: center; padding: 1em;">
+                    <a class="btn btn-secondary me-md-2" href="/" role="button">キャンセル</a>
+                    <button type="submit" class="btn btn-danger me-md-2">削除</button>
+                </div>
+            </form>
+            %end
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
